@@ -1,0 +1,88 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Convertidor de Texto</title>
+
+    <!-- Bootstrap CSS -->
+	<link
+		href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.8/dist/css/bootstrap.min.css"
+		rel="stylesheet"
+		integrity="sha384-sRIl4kxILFvY47J16cr9ZwB07vP4J8+LH7qKQnuqkuIAvNWLzeN8tE5YBujZqJLB"
+		crossorigin="anonymous"
+	>
+</head>
+<body>
+
+	<div class="container mt-5 p-5" style="max-width: 800px;">
+		<main>
+			<div class="card shadow-sm p-4">
+				<div class="card-body">
+
+					<h1 class="card-title h3 text-center mb-3">Convertidor de Bloque de Mayúsculas y Minúsculas</h1>
+					<h2 class="text-muted text-center small mb-4">Acá puedes convertir el texto de mayúsculas a minúsculas y viceversa</h2>
+
+					<div class="mb-4">
+						<textarea class="form-control" id="texto" rows="4" placeholder="Escribe tu texto aquí..."></textarea>
+					</div>
+
+					<div class="row align-items-center mb-4">
+						<div class="col-md-8 mb-3 mb-md-0">
+							<select class="form-select form-select-lg" id="opcion">
+								<option value="mayuscula">Convertir a MAYÚSCULAS</option>
+								<option value="minuscula">Convertir a minúsculas</option>
+							</select>
+						</div>
+
+						<div class="col-md-4">
+							<button class="btn btn-primary btn-lg w-100 fw-bold" onclick="procesarTexto()">¡Transformar!</button>
+						</div>
+					</div>
+					
+					<div class="p-3 mb-2 bg-secondary text-white" id="resultado">Aquí aparecerá tu texto modificado...</div>
+				</div>
+			</div>
+		</main>
+	</div>
+
+	<!--     script de la api -->
+	<script>
+		async function procesarTexto() {
+			const texto = document.getElementById('texto').value;
+			const opcion = document.getElementById('opcion').value;
+			const divResultado = document.getElementById('resultado');
+
+			divResultado.innerText = "Procesando...";
+
+			try {
+				// CONEXIÓN: Apuntamos directamente a tu API pública en Render
+				const response = await fetch('https://conversor-minuscula-mayuscula.onrender.com/conversor', {
+					method: 'POST',
+					headers: { 'Content-Type': 'application/json' },
+					// CORRECCIÓN 2: Enviamos las llaves Texto y Opcion en mayúscula como las pide tu backend
+					body: JSON.stringify({ Texto: texto, Opcion: opcion })
+				});
+
+				if (!response.ok) {
+					throw new Error("Error en la respuesta del servidor");
+				}
+
+				const data = await response.json();
+				divResultado.innerText = data.resultado;
+
+			} catch (error) {
+				divResultado.innerText = "Hubo un error al conectar con el servidor.";
+				console.error(error);
+			}
+		}
+	</script>
+
+	<!--     script de bootstrap -->
+	<script
+		src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.8/dist/js/bootstrap.bundle.min.js"
+		integrity="sha384-FKyoEForCGlyvwx9Hj09JcYn3nv7wiPVlz7YYwJrWVcXK/BmnVDxM+D2scQbITxI"
+		crossorigin="anonymous">
+	</script>
+</body>
+</html>
